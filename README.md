@@ -4,10 +4,9 @@
 [![PHP](https://img.shields.io/badge/php-%3E%3D8.2-777bb4.svg)](composer.json)
 
 Framework-agnostic PHP client for the Docker Engine API, talking directly to
-`/var/run/docker.sock` over HTTP via cURL.
+`/var/run/docker.sock` over HTTP (via Guzzle).
 
 - Plain HTTP against the Docker Engine API, over the Unix socket
-- PHP 8.2+, PSR-4, no runtime dependencies beyond `ext-curl` / `ext-json`
 
 ## Contents
 
