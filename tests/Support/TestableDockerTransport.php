@@ -27,4 +27,12 @@ final class TestableDockerTransport extends DockerTransport
     {
         return $this->buildQueryString($query);
     }
+
+    /**
+     * @param array<array-key, mixed> $data
+     */
+    public function publicEncodeJson(array $data): string
+    {
+        return $this->encodeJson($data);
+    }
 }

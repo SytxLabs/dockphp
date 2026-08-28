@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
+use stdClass;
 use Sytxlabs\Dockphp\Exceptions\DockerApiException;
 use Sytxlabs\Dockphp\Exceptions\DockerConnectionException;
 use Sytxlabs\Dockphp\Exceptions\DockerException;
@@ -341,12 +342,19 @@ class DockerTransport implements DockerTransportInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * An empty PHP array is indistinguishable from an empty list, so it
+     * json_encode()s to `[]` by default. Docker's Go structs expect a
+     * JSON object (`{}`) wherever a body or query value is a map (e.g.
+     * exec start options, `filters`) — encode empty arrays as `{}`
+     * instead of `[]` to match. Non-empty arrays are unaffected: their
+     * PHP key types already determine object-vs-list encoding.
+     *
+     * @param array<array-key, mixed> $data
      */
-    private function encodeJson(array $data): string
+    protected function encodeJson(array $data): string
     {
         try {
-            return json_encode($data, JSON_THROW_ON_ERROR);
+            return json_encode($data === [] ? new stdClass() : $data, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             throw new DockerException('Failed to JSON-encode Docker API payload: ' . $e->getMessage(), 0, $e);
         }
