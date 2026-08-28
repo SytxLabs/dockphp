@@ -58,6 +58,57 @@ final class ContainerSummary
         return ltrim($this->names[0] ?? '', '/');
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getNames(): array
+    {
+        return $this->names;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function getImageId(): string
+    {
+        return $this->imageId;
+    }
+
+    public function getCommand(): string
+    {
+        return $this->command;
+    }
+
+    public function getCreated(): int
+    {
+        return $this->created;
+    }
+
+    public function getState(): string
+    {
+        return $this->state;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getLabels(): array
+    {
+        return $this->labels;
+    }
+
     /**
      * @return array<string, mixed>
      */

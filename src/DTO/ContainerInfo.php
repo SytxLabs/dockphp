@@ -58,6 +58,50 @@ final class ContainerInfo
         return (bool) ($this->state['Running'] ?? false);
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getArgs(): array
+    {
+        return $this->args;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getState(): array
+    {
+        return $this->state;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    public function getCreated(): string
+    {
+        return $this->created;
+    }
+
     /**
      * @return array<string, mixed>
      */

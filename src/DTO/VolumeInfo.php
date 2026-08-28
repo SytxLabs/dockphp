@@ -51,6 +51,42 @@ final class VolumeInfo
         return $this->name;
     }
 
+    public function getDriver(): string
+    {
+        return $this->driver;
+    }
+
+    public function getMountpoint(): string
+    {
+        return $this->mountpoint;
+    }
+
+    public function getCreatedAt(): string
+    {
+        return $this->createdAt;
+    }
+
+    public function getScope(): string
+    {
+        return $this->scope;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getLabels(): array
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
     /**
      * @return array<string, mixed>
      */

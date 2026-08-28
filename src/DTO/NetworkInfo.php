@@ -55,6 +55,52 @@ final class NetworkInfo
         return $this->name;
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getDriver(): string
+    {
+        return $this->driver;
+    }
+
+    public function getScope(): string
+    {
+        return $this->scope;
+    }
+
+    public function getInternal(): bool
+    {
+        return $this->internal;
+    }
+
+    public function getAttachable(): bool
+    {
+        return $this->attachable;
+    }
+
+    public function getCreated(): string
+    {
+        return $this->created;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getLabels(): array
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
     /**
      * @return array<string, mixed>
      */

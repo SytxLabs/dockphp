@@ -54,6 +54,50 @@ final class ImageSummary
         return $this->repoTags[0] ?? null;
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getParentId(): string
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getRepoTags(): array
+    {
+        return $this->repoTags;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getRepoDigests(): array
+    {
+        return $this->repoDigests;
+    }
+
+    public function getCreated(): int
+    {
+        return $this->created;
+    }
+
+    public function getSize(): int
+    {
+        return $this->size;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getLabels(): array
+    {
+        return $this->labels;
+    }
+
     /**
      * @return array<string, mixed>
      */

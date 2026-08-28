@@ -62,6 +62,70 @@ final class ImageInfo
         return $this->repoTags[0] ?? null;
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getRepoTags(): array
+    {
+        return $this->repoTags;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getRepoDigests(): array
+    {
+        return $this->repoDigests;
+    }
+
+    public function getParent(): string
+    {
+        return $this->parent;
+    }
+
+    public function getComment(): string
+    {
+        return $this->comment;
+    }
+
+    public function getCreated(): string
+    {
+        return $this->created;
+    }
+
+    public function getAuthor(): string
+    {
+        return $this->author;
+    }
+
+    public function getArchitecture(): string
+    {
+        return $this->architecture;
+    }
+
+    public function getOs(): string
+    {
+        return $this->os;
+    }
+
+    public function getSize(): int
+    {
+        return $this->size;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
     /**
      * @return array<string, mixed>
      */
