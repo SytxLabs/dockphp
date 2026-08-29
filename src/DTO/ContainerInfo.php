@@ -9,7 +9,7 @@ namespace Sytxlabs\Dockphp\DTO;
  *
  * @see https://docs.docker.com/engine/api/latest/#tag/Container/operation/ContainerInspect
  */
-final class ContainerInfo
+final readonly class ContainerInfo
 {
     /**
      * @param list<string> $args
@@ -18,17 +18,16 @@ final class ContainerInfo
      * @param array<string, mixed> $raw The untouched, fully decoded source array.
      */
     public function __construct(
-        public readonly string $id,
-        public readonly string $name,
-        public readonly string $image,
-        public readonly string $path,
-        public readonly array $args,
-        public readonly array $state,
-        public readonly array $config,
-        public readonly string $created,
-        private readonly array $raw,
-    ) {
-    }
+        public string $id,
+        public string $name,
+        public string $image,
+        public string $path,
+        public array $args,
+        public array $state,
+        public array $config,
+        public string $created,
+        private array $raw,
+    ) {}
 
     /**
      * @param array<string, mixed> $data

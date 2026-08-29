@@ -8,27 +8,6 @@ use Closure;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
-/**
- * Write-only PSR-7 stream used as Guzzle's cURL "sink" for streamed
- * requests (follow logs, live stats, pull/build progress, events).
- *
- * Guzzle's default cURL handler is synchronous (curl_exec() blocks
- * until the transfer completes) but still writes each body chunk to
- * the sink as it arrives via CURLOPT_WRITEFUNCTION — so a sink that
- * forwards to a callback on write() gives genuine incremental
- * processing during that blocking call, exactly like a raw cURL
- * write-function would. Returning false from the callback makes
- * write() return a short byte count, which curl reports as
- * CURLE_WRITE_ERROR and aborts the transfer — the caller translates
- * that back into a clean early stop instead of an exception.
- *
- * When the response turns out to be an error (status >= 400, flagged
- * via markAsError() from an `on_headers` callback before any body
- * bytes arrive), bytes are buffered instead of forwarded, so the
- * caller can build a proper exception message from the full body.
- *
- * @internal
- */
 final class StreamingSink implements StreamInterface
 {
     private bool $isError = false;
@@ -38,9 +17,7 @@ final class StreamingSink implements StreamInterface
     /**
      * @param Closure(string): (bool|void) $onChunk
      */
-    public function __construct(private readonly Closure $onChunk)
-    {
-    }
+    public function __construct(private readonly Closure $onChunk) {}
 
     public function markAsError(): void
     {
@@ -79,9 +56,7 @@ final class StreamingSink implements StreamInterface
         return '';
     }
 
-    public function close(): void
-    {
-    }
+    public function close(): void {}
 
     public function detach(): mixed
     {

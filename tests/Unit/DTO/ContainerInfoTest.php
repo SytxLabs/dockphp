@@ -34,27 +34,19 @@ final class ContainerInfoTest extends TestCase
 
     public function testGetNameStripsLeadingSlash(): void
     {
-        $info = ContainerInfo::fromArray(['Name' => '/web']);
-
-        self::assertSame('web', $info->getName());
+        self::assertSame('web', ContainerInfo::fromArray(['Name' => '/web'])->getName());
     }
 
     public function testIsRunningReflectsStateRunning(): void
     {
-        $running = ContainerInfo::fromArray(['State' => ['Running' => true]]);
-        $stopped = ContainerInfo::fromArray(['State' => ['Running' => false]]);
-        $missing = ContainerInfo::fromArray([]);
-
-        self::assertTrue($running->isRunning());
-        self::assertFalse($stopped->isRunning());
-        self::assertFalse($missing->isRunning());
+        self::assertTrue(ContainerInfo::fromArray(['State' => ['Running' => true]])->isRunning());
+        self::assertFalse(ContainerInfo::fromArray(['State' => ['Running' => false]])->isRunning());
+        self::assertFalse(ContainerInfo::fromArray([])->isRunning());
     }
 
     public function testRawReturnsOriginalArrayUntouched(): void
     {
         $data = ['Id' => 'abc123', 'SomeUnmodeledField' => 'kept'];
-        $info = ContainerInfo::fromArray($data);
-
-        self::assertSame($data, $info->raw());
+        self::assertSame($data, ContainerInfo::fromArray($data)->raw());
     }
 }

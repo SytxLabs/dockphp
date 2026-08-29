@@ -32,23 +32,17 @@ final class ImageSummaryTest extends TestCase
 
     public function testGetNameReturnsFirstRepoTag(): void
     {
-        $summary = ImageSummary::fromArray(['RepoTags' => ['nginx:latest', 'nginx:1.25']]);
-
-        self::assertSame('nginx:latest', $summary->getName());
+        self::assertSame('nginx:latest', ImageSummary::fromArray(['RepoTags' => ['nginx:latest', 'nginx:1.25']])->getName());
     }
 
     public function testGetNameReturnsNullForUntaggedImage(): void
     {
-        $summary = ImageSummary::fromArray(['RepoTags' => []]);
-
-        self::assertNull($summary->getName());
+        self::assertNull(ImageSummary::fromArray(['RepoTags' => []])->getName());
     }
 
     public function testRawReturnsOriginalArrayUntouched(): void
     {
         $data = ['Id' => 'sha256:abc123', 'SomeUnmodeledField' => 'kept'];
-        $summary = ImageSummary::fromArray($data);
-
-        self::assertSame($data, $summary->raw());
+        self::assertSame($data, ImageSummary::fromArray($data)->raw());
     }
 }

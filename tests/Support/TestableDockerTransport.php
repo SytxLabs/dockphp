@@ -7,8 +7,7 @@ namespace Sytxlabs\Dockphp\Tests\Support;
 use Sytxlabs\Dockphp\Http\DockerTransport;
 
 /**
- * Exposes DockerTransport's protected pure helper methods for unit
- * testing without touching curl or a real socket.
+ * Exposes DockerTransport's protected pure helper methods for unit testing without touching curl or a real socket.
  */
 final class TestableDockerTransport extends DockerTransport
 {

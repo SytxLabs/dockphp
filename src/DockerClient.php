@@ -32,44 +32,27 @@ final class DockerClient
 
     /**
      * @param string $socketPath Path to the Docker Engine Unix socket.
-     * @param string|null $apiVersion Manually pin the API version (e.g. "1.43").
-     *                                 When null, it is auto-detected from `/version`
-     *                                 on first use.
+     * @param string|null $apiVersion Manually pin the API version (e.g. "1.43"). When null, it is auto-detected from `/version` on first use.
      * @param float $connectTimeout Connection timeout in seconds.
      * @param float $timeout Total request timeout in seconds.
      */
-    public function __construct(
-        string $socketPath = '/var/run/docker.sock',
-        ?string $apiVersion = null,
-        float $connectTimeout = 5.0,
-        float $timeout = 30.0,
-    ) {
+    public function __construct(string $socketPath = '/var/run/docker.sock', ?string $apiVersion = null, float $connectTimeout = 5.0, float $timeout = 30.0)
+    {
         $this->transport = DockerTransport::forSocket($socketPath, $apiVersion, $connectTimeout, $timeout);
     }
 
     /**
-     * Connects to a Docker Engine exposed over TCP instead of a Unix
-     * socket (e.g. a remote host, or Docker Desktop's TCP endpoint).
+     * Connects to a Docker Engine exposed over TCP instead of a Unix socket (e.g. a remote host, or Docker Desktop's TCP endpoint).
      *
      * @param string $host Hostname or IP only, without scheme.
      * @param string|null $caFile Path to a CA bundle used to verify the server certificate.
      * @param string|null $certFile Path to the client certificate (mutual TLS).
      * @param string|null $keyFile Path to the client private key (mutual TLS).
      */
-    public static function tcp(
-        string $host,
-        int $port = 2375,
-        bool $tls = false,
-        ?string $caFile = null,
-        ?string $certFile = null,
-        ?string $keyFile = null,
-        ?string $apiVersion = null,
-        float $connectTimeout = 5.0,
-        float $timeout = 30.0,
-    ): self {
+    public static function tcp(string $host, int $port = 2375, bool $tls = false, ?string $caFile = null, ?string $certFile = null, ?string $keyFile = null, ?string $apiVersion = null, float $connectTimeout = 5.0, float $timeout = 30.0): self
+    {
         $client = new self();
         $client->transport = DockerTransport::forTcp($host, $port, $tls, $caFile, $certFile, $keyFile, $apiVersion, $connectTimeout, $timeout);
-
         return $client;
     }
 

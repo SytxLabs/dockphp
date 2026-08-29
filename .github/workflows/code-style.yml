@@ -1,0 +1,22 @@
+name: Check code style
+
+on: [push]
+
+jobs:
+  code-style:
+    runs-on: ubuntu-latest
+    name: Code style
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
+      - name: Install
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Code style checks for PHP
+        run: composer cs

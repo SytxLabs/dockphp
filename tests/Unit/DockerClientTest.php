@@ -41,7 +41,6 @@ final class DockerClientTest extends TestCase
     public function testGetApiVersionReturnsManualOverrideWithoutIo(): void
     {
         $client = new DockerClient('/var/run/docker.sock', '1.43');
-
         self::assertSame('1.43', $client->getApiVersion());
     }
 }

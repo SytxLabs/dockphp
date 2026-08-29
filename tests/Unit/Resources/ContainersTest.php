@@ -276,8 +276,7 @@ final class ContainersTest extends TestCase
     {
         $this->transport->setStreamChunks(['{"cpu":1}']);
 
-        $this->containers->statsStream('abc123', function (): void {
-        });
+        $this->containers->statsStream('abc123', function (): void {});
 
         $call = $this->transport->lastCall();
 
@@ -287,8 +286,7 @@ final class ContainersTest extends TestCase
 
     public function testAttachStreamDefaultsToStdoutStderrStream(): void
     {
-        $this->containers->attachStream('abc123', function (): void {
-        });
+        $this->containers->attachStream('abc123', function (): void {});
 
         $call = $this->transport->lastCall();
 

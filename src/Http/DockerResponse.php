@@ -11,15 +11,11 @@ use JsonException;
  */
 final class DockerResponse
 {
-    /** @var array<mixed>|null */
+    /** @var array<string, mixed>|null */
     private ?array $decoded = null;
     private bool $decodeAttempted = false;
 
-    public function __construct(
-        private readonly int $statusCode,
-        private readonly string $body,
-    ) {
-    }
+    public function __construct(private readonly int $statusCode, private readonly string $body) {}
 
     public function getStatusCode(): int
     {
@@ -37,30 +33,24 @@ final class DockerResponse
     }
 
     /**
-     * Lazily JSON-decodes the response body as an associative array.
-     * Returns null when the body is empty or not valid JSON.
+     * Lazily JSON-decodes the response body as an associative array. Returns null when the body is empty or not valid JSON.
      *
-     * @return array<mixed>|null
+     * @return array<string, mixed>|null
      */
     public function json(): ?array
     {
         if ($this->decodeAttempted) {
             return $this->decoded;
         }
-
         $this->decodeAttempted = true;
-
         if (trim($this->body) === '') {
             return $this->decoded = null;
         }
-
         try {
-            /** @var mixed $decoded */
             $decoded = json_decode($this->body, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return $this->decoded = null;
         }
-
-        return $this->decoded = is_array($decoded) ? $decoded : null;
+        return $this->decoded = (is_array($decoded) ? $decoded : null);
     }
 }

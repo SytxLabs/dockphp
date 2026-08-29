@@ -33,36 +33,25 @@ final class System extends AbstractResource
     }
 
     /**
-     * Streams Docker's real-time event feed (container/image/network/
-     * volume lifecycle events). This call blocks until the connection
-     * ends or $onEvent returns false — pass a generous $timeout to
-     * DockerClient (or expect it to run until the process is killed).
+     * Streams Docker's real-time event feed (container/image/network/volume lifecycle events).
+     * This call blocks until the connection ends or $onEvent returns false - pass a generous $timeout to DockerClient (or expect it to run until the process is killed).
      *
      * @param array<string, array<int, string>> $filters
-     * @param callable(array<mixed>): (bool|void) $onEvent
+     * @param callable(array<string, mixed>): (bool|void) $onEvent
      */
     public function events(callable $onEvent, array $filters = [], ?string $since = null, ?string $until = null): void
     {
         $lineBuffer = new NdjsonLineBuffer();
-
-        $this->transport->stream('GET', '/events', null, [
-            'filters' => $filters === [] ? null : $filters,
-            'since' => $since,
-            'until' => $until,
-        ], static fn (string $chunk): bool => $lineBuffer->push($chunk, $onEvent));
+        $this->transport->stream('GET', '/events', null, ['filters' => $filters === [] ? null : $filters, 'since' => $since, 'until' => $until], static fn(string $chunk): bool => $lineBuffer->push($chunk, $onEvent));
     }
 
     /**
-     * Prunes containers, images, networks and the build cache in one
-     * call. Note this does not include volumes — use Volumes::prune()
-     * for those, matching the Engine API's own separation.
+     * Prunes containers, images, networks and the build cache in one call. Note this does not include volumes - use Volumes::prune() for those, matching the Engine API's own separation.
      *
      * @param array<string, array<int, string>> $filters
      */
     public function prune(array $filters = []): DockerResponse
     {
-        return $this->transport->request('POST', '/system/prune', null, [
-            'filters' => $filters === [] ? null : $filters,
-        ]);
+        return $this->transport->request('POST', '/system/prune', null, ['filters' => $filters === [] ? null : $filters]);
     }
 }

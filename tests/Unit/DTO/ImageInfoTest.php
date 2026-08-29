@@ -42,8 +42,6 @@ final class ImageInfoTest extends TestCase
     public function testRawReturnsOriginalArrayUntouched(): void
     {
         $data = ['Id' => 'sha256:abc123', 'SomeUnmodeledField' => 'kept'];
-        $info = ImageInfo::fromArray($data);
-
-        self::assertSame($data, $info->raw());
+        self::assertSame($data, ImageInfo::fromArray($data)->raw());
     }
 }

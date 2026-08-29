@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Sytxlabs\Dockphp\DTO;
 
 /**
- * A volume, from either `volumes()->list()` or `volumes()->inspect()`
- * — the Engine API uses the same shape for both.
+ * A volume, from either `volumes()->list()` or `volumes()->inspect()` - the Engine API uses the same shape for both.
  *
  * @see https://docs.docker.com/engine/api/latest/#tag/Volume/operation/VolumeList
  */
-final class VolumeInfo
+final readonly class VolumeInfo
 {
     /**
      * @param array<string, string> $labels
@@ -18,16 +17,15 @@ final class VolumeInfo
      * @param array<string, mixed> $raw The untouched, fully decoded source array.
      */
     public function __construct(
-        public readonly string $name,
-        public readonly string $driver,
-        public readonly string $mountpoint,
-        public readonly string $createdAt,
-        public readonly string $scope,
-        public readonly array $labels,
-        public readonly array $options,
-        private readonly array $raw,
-    ) {
-    }
+        public string $name,
+        public string $driver,
+        public string $mountpoint,
+        public string $createdAt,
+        public string $scope,
+        public array $labels,
+        public array $options,
+        private array $raw,
+    ) {}
 
     /**
      * @param array<string, mixed> $data

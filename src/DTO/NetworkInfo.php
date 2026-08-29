@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Sytxlabs\Dockphp\DTO;
 
 /**
- * A network, from either `networks()->list()` or `networks()->inspect()`
- * — the Engine API uses the same shape for both.
+ * A network, from either `networks()->list()` or `networks()->inspect()` - the Engine API uses the same shape for both.
  *
  * @see https://docs.docker.com/engine/api/latest/#tag/Network/operation/NetworkList
  */
-final class NetworkInfo
+final readonly class NetworkInfo
 {
     /**
      * @param array<string, string> $labels
@@ -18,18 +17,17 @@ final class NetworkInfo
      * @param array<string, mixed> $raw The untouched, fully decoded source array.
      */
     public function __construct(
-        public readonly string $id,
-        public readonly string $name,
-        public readonly string $driver,
-        public readonly string $scope,
-        public readonly bool $internal,
-        public readonly bool $attachable,
-        public readonly string $created,
-        public readonly array $labels,
-        public readonly array $options,
-        private readonly array $raw,
-    ) {
-    }
+        public string $id,
+        public string $name,
+        public string $driver,
+        public string $scope,
+        public bool $internal,
+        public bool $attachable,
+        public string $created,
+        public array $labels,
+        public array $options,
+        private array $raw,
+    ) {}
 
     /**
      * @param array<string, mixed> $data
