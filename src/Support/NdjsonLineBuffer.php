@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Sytxlabs\Dockphp\Support;
 
+use JsonException;
+
 /**
  * Buffers streamed chunks and decodes newline-delimited JSON lines as
  * they become complete, since chunk boundaries from cURL never align
@@ -20,7 +22,7 @@ final class NdjsonLineBuffer
      * non-JSON or non-object lines are skipped. Stops early and returns
      * false as soon as `$onEvent` itself returns false.
      *
-     * @param callable(array<mixed>): (bool|void) $onEvent
+     * @param callable(array<string, mixed>): (bool|void) $onEvent
      */
     public function push(string $chunk, callable $onEvent): bool
     {
@@ -29,17 +31,17 @@ final class NdjsonLineBuffer
         while (($pos = strpos($this->buffer, "\n")) !== false) {
             $line = trim(substr($this->buffer, 0, $pos));
             $this->buffer = substr($this->buffer, $pos + 1);
-
             if ($line === '') {
                 continue;
             }
-
-            $decoded = json_decode($line, true);
-
+            try {
+                $decoded = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+                continue;
+            }
             if (!is_array($decoded)) {
                 continue;
             }
-
             if ($onEvent($decoded) === false) {
                 return false;
             }

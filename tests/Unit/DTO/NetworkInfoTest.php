@@ -34,16 +34,12 @@ final class NetworkInfoTest extends TestCase
 
     public function testGetNameReturnsName(): void
     {
-        $network = NetworkInfo::fromArray(['Name' => 'my-network']);
-
-        self::assertSame('my-network', $network->getName());
+        self::assertSame('my-network', NetworkInfo::fromArray(['Name' => 'my-network'])->getName());
     }
 
     public function testRawReturnsOriginalArrayUntouched(): void
     {
         $data = ['Id' => 'net123', 'SomeUnmodeledField' => 'kept'];
-        $network = NetworkInfo::fromArray($data);
-
-        self::assertSame($data, $network->raw());
+        self::assertSame($data, NetworkInfo::fromArray($data)->raw());
     }
 }

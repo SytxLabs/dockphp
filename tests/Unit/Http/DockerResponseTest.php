@@ -19,9 +19,7 @@ final class DockerResponseTest extends TestCase
 
     public function testJsonDecodesValidBody(): void
     {
-        $response = new DockerResponse(200, '{"Id":"abc123","Warnings":[]}');
-
-        self::assertSame(['Id' => 'abc123', 'Warnings' => []], $response->json());
+        self::assertSame(['Id' => 'abc123', 'Warnings' => []], (new DockerResponse(200, '{"Id":"abc123","Warnings":[]}'))->json());
     }
 
     public function testJsonReturnsNullForEmptyBody(): void
@@ -38,14 +36,12 @@ final class DockerResponseTest extends TestCase
     public function testJsonIsMemoized(): void
     {
         $response = new DockerResponse(200, '{"a":1}');
-
         self::assertSame($response->json(), $response->json());
     }
 
     public function testGetBodyReturnsRawString(): void
     {
         $response = new DockerResponse(200, '{"a":1}');
-
         self::assertSame('{"a":1}', $response->getBody());
     }
 }

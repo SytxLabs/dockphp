@@ -66,7 +66,7 @@ $docker->volumes()->remove('my-volume');
 ## Typed results
 
 `list()` and `inspect()` on Containers, Images, Networks and Volumes return
-typed DTOs — not raw JSON — so you get autocompletion and don't have to
+typed DTOs - not raw JSON - so you get autocompletion and don't have to
 remember Docker's field names:
 
 ```php
@@ -78,7 +78,7 @@ $image = $docker->images()->inspect('nginx:latest');
 echo $image->getName();          // "nginx:latest" (first RepoTag), or null if untagged
 
 foreach ($docker->containers()->list(['all' => true]) as $summary) {
-    echo $summary->getName(), ' — ', $summary->status, "\n";
+    echo $summary->getName(), ' - ', $summary->status, "\n";
 }
 ```
 
@@ -92,11 +92,11 @@ foreach ($docker->containers()->list(['all' => true]) as $summary) {
 | `volumes()->list()` / `inspect()` | `list<DTO\VolumeInfo>` / `DTO\VolumeInfo` |
 
 Every DTO only models the commonly-needed fields (id, name, state, labels,
-...) — call `->raw()` on any of them to get the full, untouched decoded
+...) - call `->raw()` on any of them to get the full, untouched decoded
 array for anything not promoted to a typed property.
 
 Every other resource method (`start()`, `stop()`, `remove()`, `create()`,
-...) still returns a `Sytxlabs\Dockphp\Http\DockerResponse` — there's no
+...) still returns a `Sytxlabs\Dockphp\Http\DockerResponse` - there's no
 useful entity to hydrate from an action's ack/204 response. Use `->json()`
 for the decoded body or `->getBody()` for the raw string.
 
@@ -105,7 +105,7 @@ for the decoded body or `->getBody()` for the raw string.
 `containers()->create()` accepts the full Docker container config as a
 single array. Query-only parameters (`name`, `platform`) are automatically
 split out of the array and sent as query string parameters, the rest is
-sent as the JSON request body — you never have to think about the split:
+sent as the JSON request body - you never have to think about the split:
 
 ```php
 $container = $docker->containers()->create([
@@ -137,7 +137,7 @@ $docker->volumes()->create('my-volume', ['Driver' => 'local']);
 ## API version handling
 
 By default, the API version is **not** fetched eagerly when you construct
-`DockerClient` — it is resolved lazily via a single `GET /version` call the
+`DockerClient` - it is resolved lazily via a single `GET /version` call the
 first time a request is made, then cached for the lifetime of the client.
 
 You can override it manually to skip that lookup entirely and pin a
@@ -159,12 +159,12 @@ $docker = new DockerClient(
 
 ## Error handling
 
-- `Sytxlabs\Dockphp\Exceptions\DockerConnectionException` — the socket
+- `Sytxlabs\Dockphp\Exceptions\DockerConnectionException` - the socket
   could not be reached at all (missing socket, connection refused, timeout).
-- `Sytxlabs\Dockphp\Exceptions\DockerApiException` — the Engine responded
+- `Sytxlabs\Dockphp\Exceptions\DockerApiException` - the Engine responded
   with a non-2xx HTTP status. Carries `getStatusCode()` and
   `getDockerMessage()` (Docker's own JSON error message, when present).
-- `Sytxlabs\Dockphp\Exceptions\DockerNotFoundException` — a `DockerApiException`
+- `Sytxlabs\Dockphp\Exceptions\DockerNotFoundException` - a `DockerApiException`
   subclass specifically for HTTP 404 (e.g. inspecting a container that
   doesn't exist).
 
@@ -190,7 +190,7 @@ try {
 
 The Docker Engine API, reached through `/var/run/docker.sock`, grants
 practically full control over the Docker host. **This package never
-changes socket permissions itself** (no `chmod`, no ownership changes) —
+changes socket permissions itself** (no `chmod`, no ownership changes) -
 managing who can read/write that socket is entirely up to you and your
 deployment. Only grant access to the socket to trusted, trusted-equivalent
 code.
@@ -210,7 +210,7 @@ $docker->containers()->logsStream('web', function (string $chunk) {
 
 // Live stats
 $docker->containers()->statsStream('web', function (string $chunk) {
-    // one or more JSON objects per chunk — see NdjsonLineBuffer below
+    // one or more JSON objects per chunk - see NdjsonLineBuffer below
 });
 
 // Pull with progress
@@ -231,7 +231,7 @@ $docker->system()->events(function (array $event) {
 
 `pullStream()`/`buildStream()`/`events()` already decode newline-delimited
 JSON for you via `Sytxlabs\Dockphp\Support\NdjsonLineBuffer`. `logsStream()`
-and `attachStream()` hand you raw bytes instead — see the demux section
+and `attachStream()` hand you raw bytes instead - see the demux section
 below.
 
 ## Demultiplexing container logs
@@ -293,7 +293,7 @@ $docker = DockerClient::tcp('docker.example.com', 2376, tls: true, caFile: '/pat
 ## Registry authentication (pull/push)
 
 `pull()`, `pullStream()`, `push()` and `pushStream()` take an optional
-`$registryAuth` array — the usual Docker auth config
+`$registryAuth` array - the usual Docker auth config
 (`username`/`password`/`serveraddress`, or `identitytoken`). It's sent as
 the base64-encoded `X-Registry-Auth` header Docker expects:
 
@@ -322,8 +322,8 @@ composer stan               # static analysis (PHPStan)
 
 Integration tests automatically skip themselves when
 `/var/run/docker.sock` is not present (e.g. on Windows, or a machine
-without Docker installed) — no configuration required.
+without Docker installed) - no configuration required.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).

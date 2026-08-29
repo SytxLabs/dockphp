@@ -35,23 +35,17 @@ final class ContainerSummaryTest extends TestCase
 
     public function testGetNameStripsLeadingSlash(): void
     {
-        $summary = ContainerSummary::fromArray(['Names' => ['/web']]);
-
-        self::assertSame('web', $summary->getName());
+        self::assertSame('web', ContainerSummary::fromArray(['Names' => ['/web']])->getName());
     }
 
     public function testGetNameReturnsEmptyStringWhenNoNames(): void
     {
-        $summary = ContainerSummary::fromArray([]);
-
-        self::assertSame('', $summary->getName());
+        self::assertSame('', ContainerSummary::fromArray([])->getName());
     }
 
     public function testRawReturnsOriginalArrayUntouched(): void
     {
         $data = ['Id' => 'abc123', 'SomeUnmodeledField' => 'kept'];
-        $summary = ContainerSummary::fromArray($data);
-
-        self::assertSame($data, $summary->raw());
+        self::assertSame($data, ContainerSummary::fromArray($data)->raw());
     }
 }

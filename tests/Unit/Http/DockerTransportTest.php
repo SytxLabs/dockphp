@@ -18,53 +18,42 @@ final class DockerTransportTest extends TestCase
 
     public function testBuildUrlWithoutQuery(): void
     {
-        self::assertSame(
-            'http://localhost/containers/json',
-            $this->transport->publicBuildUrl('/containers/json', []),
-        );
+        self::assertSame('http://localhost/containers/json', $this->transport->publicBuildUrl('/containers/json', []));
     }
 
     public function testBuildUrlWithScalarQuery(): void
     {
         $url = $this->transport->publicBuildUrl('/containers/abc/json', ['size' => true]);
-
         self::assertSame('http://localhost/containers/abc/json?size=true', $url);
     }
 
     public function testBuildQueryStringDropsNullValues(): void
     {
         $query = $this->transport->publicBuildQueryString(['t' => null, 'signal' => 'SIGTERM']);
-
         self::assertSame('signal=SIGTERM', $query);
     }
 
     public function testBuildQueryStringEncodesBooleans(): void
     {
         $query = $this->transport->publicBuildQueryString(['force' => true, 'noprune' => false]);
-
         self::assertSame('force=true&noprune=false', $query);
     }
 
     public function testBuildQueryStringJsonEncodesArrayValues(): void
     {
-        $query = $this->transport->publicBuildQueryString([
-            'filters' => ['status' => ['running']],
-        ]);
-
+        $query = $this->transport->publicBuildQueryString(['filters' => ['status' => ['running']]]);
         self::assertSame('filters=' . rawurlencode('{"status":["running"]}'), $query);
     }
 
     public function testBuildQueryStringUrlEncodesValues(): void
     {
         $query = $this->transport->publicBuildQueryString(['name' => 'my container']);
-
         self::assertSame('name=my%20container', $query);
     }
 
     public function testBuildUrlCombinesPathAndMultipleQueryParams(): void
     {
         $url = $this->transport->publicBuildUrl('/containers/json', ['all' => true, 'limit' => 5]);
-
         self::assertSame('http://localhost/containers/json?all=true&limit=5', $url);
     }
 
@@ -75,9 +64,6 @@ final class DockerTransportTest extends TestCase
 
     public function testEncodeJsonEncodesEmptyArrayAsObjectNotList(): void
     {
-        // Regression: Docker's Go structs (e.g. ExecStartOptions) reject an
-        // empty JSON array `[]` where an object `{}` is expected - PHP's
-        // empty array is otherwise indistinguishable from an empty list.
         self::assertSame('{}', $this->transport->publicEncodeJson([]));
     }
 

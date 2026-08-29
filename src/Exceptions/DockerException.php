@@ -9,6 +9,4 @@ use RuntimeException;
 /**
  * Base exception for all errors raised by this package.
  */
-class DockerException extends RuntimeException
-{
-}
+class DockerException extends RuntimeException {}

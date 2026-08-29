@@ -9,7 +9,7 @@ namespace Sytxlabs\Dockphp\DTO;
  *
  * @see https://docs.docker.com/engine/api/latest/#tag/Container/operation/ContainerList
  */
-final class ContainerSummary
+final readonly class ContainerSummary
 {
     /**
      * @param list<string> $names Docker's own names, each still prefixed with a leading "/".
@@ -17,18 +17,17 @@ final class ContainerSummary
      * @param array<string, mixed> $raw The untouched, fully decoded source array.
      */
     public function __construct(
-        public readonly string $id,
-        public readonly array $names,
-        public readonly string $image,
-        public readonly string $imageId,
-        public readonly string $command,
-        public readonly int $created,
-        public readonly string $state,
-        public readonly string $status,
-        public readonly array $labels,
-        private readonly array $raw,
-    ) {
-    }
+        public string $id,
+        public array $names,
+        public string $image,
+        public string $imageId,
+        public string $command,
+        public int $created,
+        public string $state,
+        public string $status,
+        public array $labels,
+        private array $raw,
+    ) {}
 
     /**
      * @param array<string, mixed> $data

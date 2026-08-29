@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Sytxlabs\Dockphp\Resources;
 
+use JsonException;
+use RuntimeException;
 use Sytxlabs\Dockphp\DTO\ImageInfo;
 use Sytxlabs\Dockphp\DTO\ImageSummary;
 use Sytxlabs\Dockphp\Http\DockerResponse;
@@ -23,23 +25,16 @@ final class Images extends AbstractResource
     {
         $response = $this->transport->request('GET', '/images/json', null, $query);
 
-        return array_map(
-            static fn (array $item): ImageSummary => ImageSummary::fromArray($item),
-            $this->decodeList($response),
-        );
+        return array_map(static fn(array $item): ImageSummary => ImageSummary::fromArray($item), $this->decodeList($response));
     }
 
     public function inspect(string $name): ImageInfo
     {
-        $response = $this->transport->request('GET', "/images/{$name}/json");
-
-        return ImageInfo::fromArray($this->decodeObject($response));
+        return ImageInfo::fromArray($this->decodeObject($this->transport->request('GET', "/images/{$name}/json")));
     }
 
     /**
-     * Pulls (creates) an image from a registry. Returns the full,
-     * non-streamed body of newline-delimited JSON progress events.
-     * Use pullStream() to react to progress as it happens.
+     * Pulls (creates) an image from a registry. Returns the full, non-streamed body of newline-delimited JSON progress events. Use pullStream() to react to progress as it happens.
      *
      * @param array<string, mixed>|null $registryAuth Credentials for a private registry, e.g. ['username' => ..., 'password' => ..., 'serveraddress' => ...] or ['identitytoken' => ...].
      */
@@ -53,12 +48,10 @@ final class Images extends AbstractResource
     }
 
     /**
-     * Pulls an image, invoking $onProgress with each decoded progress
-     * event as it arrives. Return false from $onProgress to abort the
-     * pull early.
+     * Pulls an image, invoking $onProgress with each decoded progress event as it arrives. Return false from $onProgress to abort the pull early.
      *
      * @param array<string, mixed>|null $registryAuth See pull().
-     * @param callable(array<mixed>): (bool|void) $onProgress
+     * @param callable(array<string, mixed>): (bool|void) $onProgress
      */
     public function pullStream(string $name, ?string $tag, ?string $platform, callable $onProgress, ?array $registryAuth = null): int
     {
@@ -68,37 +61,29 @@ final class Images extends AbstractResource
             'fromImage' => $name,
             'tag' => $tag,
             'platform' => $platform,
-        ], static fn (string $chunk): bool => $lineBuffer->push($chunk, $onProgress), $this->registryAuthHeader($registryAuth));
+        ], static fn(string $chunk): bool => $lineBuffer->push($chunk, $onProgress), $this->registryAuthHeader($registryAuth));
     }
 
     /**
-     * Pushes an image to a registry. Returns the full, non-streamed
-     * body of newline-delimited JSON progress events. Use
-     * pushStream() to react to progress as it happens.
+     * Pushes an image to a registry. Returns the full, non-streamed body of newline-delimited JSON progress events. Use pushStream() to react to progress as it happens.
      *
      * @param array<string, mixed>|null $registryAuth See pull(). Required by most registries.
      */
     public function push(string $name, ?string $tag = null, ?array $registryAuth = null): DockerResponse
     {
-        return $this->transport->request('POST', "/images/{$name}/push", null, [
-            'tag' => $tag,
-        ], $this->registryAuthHeader($registryAuth));
+        return $this->transport->request('POST', "/images/{$name}/push", null, ['tag' => $tag], $this->registryAuthHeader($registryAuth));
     }
 
     /**
-     * Like push(), but invokes $onProgress with each decoded progress
-     * event as it arrives. Return false from $onProgress to abort.
+     * Like push(), but invokes $onProgress with each decoded progress event as it arrives. Return false from $onProgress to abort.
      *
      * @param array<string, mixed>|null $registryAuth See pull().
-     * @param callable(array<mixed>): (bool|void) $onProgress
+     * @param callable(array<string, mixed>): (bool|void) $onProgress
      */
     public function pushStream(string $name, callable $onProgress, ?string $tag = null, ?array $registryAuth = null): int
     {
         $lineBuffer = new NdjsonLineBuffer();
-
-        return $this->transport->stream('POST', "/images/{$name}/push", null, [
-            'tag' => $tag,
-        ], static fn (string $chunk): bool => $lineBuffer->push($chunk, $onProgress), $this->registryAuthHeader($registryAuth));
+        return $this->transport->stream('POST', "/images/{$name}/push", null, ['tag' => $tag], static fn(string $chunk): bool => $lineBuffer->push($chunk, $onProgress), $this->registryAuthHeader($registryAuth));
     }
 
     /**
@@ -108,27 +93,19 @@ final class Images extends AbstractResource
      */
     public function search(string $term, ?int $limit = null, array $filters = []): DockerResponse
     {
-        return $this->transport->request('GET', '/images/search', null, [
-            'term' => $term,
-            'limit' => $limit,
-            'filters' => $filters === [] ? null : $filters,
-        ]);
+        return $this->transport->request('GET', '/images/search', null, ['term' => $term, 'limit' => $limit, 'filters' => $filters === [] ? null : $filters]);
     }
 
     /**
-     * Imports one or more images from a tar archive previously
-     * produced by save()/saveMultiple() (or `docker save`).
+     * Imports one or more images from a tar archive previously produced by save()/saveMultiple() (or `docker save`).
      */
     public function load(string $tarContent, bool $quiet = false): DockerResponse
     {
-        return $this->transport->requestRaw('POST', '/images/load', $tarContent, [
-            'quiet' => $quiet,
-        ], ['Content-Type: application/x-tar']);
+        return $this->transport->requestRaw('POST', '/images/load', $tarContent, ['quiet' => $quiet], ['Content-Type: application/x-tar']);
     }
 
     /**
-     * Exports a single image (with its history) as a tar archive.
-     * Read the raw tar bytes via DockerResponse::getBody().
+     * Exports a single image (with its history) as a tar archive. Read the raw tar bytes via DockerResponse::getBody().
      */
     public function save(string $name): DockerResponse
     {
@@ -136,30 +113,18 @@ final class Images extends AbstractResource
     }
 
     /**
-     * Exports multiple images (and their shared layers) as a single
-     * tar archive. Read the raw tar bytes via DockerResponse::getBody().
-     *
-     * Docker expects the repeated `names=a&names=b` query format here
-     * rather than the JSON-array-per-key format used everywhere else
-     * (e.g. `filters`), so the query string is built manually.
+     * Exports multiple images (and their shared layers) as a single tar archive. Read the raw tar bytes via DockerResponse::getBody().
+     * Docker expects the repeated `names=a&names=b` query format here rather than the JSON-array-per-key format used everywhere else (e.g. `filters`), so the query string is built manually.
      *
      * @param list<string> $names
      */
     public function saveMultiple(array $names): DockerResponse
     {
-        $namesQuery = implode('&', array_map(
-            static fn (string $name): string => 'names=' . rawurlencode($name),
-            $names,
-        ));
-
+        $namesQuery = implode('&', array_map(static fn(string $name): string => 'names=' . rawurlencode($name), $names));
         return $this->transport->request('GET', '/images/get' . ($namesQuery !== '' ? '?' . $namesQuery : ''));
     }
 
-    /**
-     * Returns distribution (registry) information for an image
-     * reference without pulling it — useful to check a digest or
-     * available platforms up front.
-     */
+    /** Returns distribution (registry) information for an image reference without pulling it useful to check a digest or available platforms up front. */
     public function inspectDistribution(string $name): DockerResponse
     {
         return $this->transport->request('GET', "/distribution/{$name}/json");
@@ -175,8 +140,11 @@ final class Images extends AbstractResource
         if ($registryAuth === null) {
             return [];
         }
-
-        return ['X-Registry-Auth: ' . base64_encode(json_encode($registryAuth, JSON_THROW_ON_ERROR))];
+        try {
+            return ['X-Registry-Auth: ' . base64_encode(json_encode($registryAuth, JSON_THROW_ON_ERROR))];
+        } catch (JsonException $e) {
+            throw new RuntimeException('Failed to encode registry auth as JSON: ' . $e->getMessage(), 0, $e);
+        }
     }
 
     /**
@@ -185,16 +153,8 @@ final class Images extends AbstractResource
      * @param list<string> $changes Dockerfile-style instructions to apply while committing (e.g. 'CMD ["/app"]').
      * @param array<string, mixed>|null $config Optional container config to merge into the resulting image.
      */
-    public function commit(
-        string $containerId,
-        ?string $repo = null,
-        ?string $tag = null,
-        ?string $comment = null,
-        ?string $author = null,
-        bool $pause = true,
-        array $changes = [],
-        ?array $config = null,
-    ): DockerResponse {
+    public function commit(string $containerId, ?string $repo = null, ?string $tag = null, ?string $comment = null, ?string $author = null, bool $pause = true, array $changes = [], ?array $config = null): DockerResponse
+    {
         return $this->transport->request('POST', '/commit', $config, [
             'container' => $containerId,
             'repo' => $repo,
@@ -207,11 +167,8 @@ final class Images extends AbstractResource
     }
 
     /**
-     * Builds an image from a tar-encoded build context (the same
-     * archive `docker build` sends — a directory containing a
-     * Dockerfile, tarred but not compressed, or gzip/bzip2/xz
-     * compressed). Returns the full, non-streamed build log body.
-     * Use buildStream() to react to build progress as it happens.
+     * Builds an image from a tar-encoded build context (the same archive `docker build` sends a directory containing a Dockerfile, tarred but not compressed, or gzip/bzip2/xz compressed).
+     * Returns the full, non-streamed build log body. Use buildStream() to react to build progress as it happens.
      *
      * @param array<string, mixed> $query Supports e.g. 't' (tag), 'dockerfile', 'nocache', 'buildargs' (as a JSON-encoded string), 'platform'.
      */
@@ -225,36 +182,22 @@ final class Images extends AbstractResource
      * log line as it arrives. Return false from $onProgress to abort.
      *
      * @param array<string, mixed> $query
-     * @param callable(array<mixed>): (bool|void) $onProgress
+     * @param callable(array<string, mixed>): (bool|void) $onProgress
      */
     public function buildStream(string $tarContent, callable $onProgress, array $query = []): int
     {
         $lineBuffer = new NdjsonLineBuffer();
-
-        return $this->transport->streamRaw(
-            'POST',
-            '/build',
-            $tarContent,
-            $query,
-            static fn (string $chunk): bool => $lineBuffer->push($chunk, $onProgress),
-            ['Content-Type: application/x-tar'],
-        );
+        return $this->transport->streamRaw('POST', '/build', $tarContent, $query, static fn(string $chunk): bool => $lineBuffer->push($chunk, $onProgress), ['Content-Type: application/x-tar']);
     }
 
     public function remove(string $name, bool $force = false, bool $noprune = false): DockerResponse
     {
-        return $this->transport->request('DELETE', "/images/{$name}", null, [
-            'force' => $force,
-            'noprune' => $noprune,
-        ]);
+        return $this->transport->request('DELETE', "/images/{$name}", null, ['force' => $force, 'noprune' => $noprune]);
     }
 
     public function tag(string $name, string $repo, ?string $tag = null): DockerResponse
     {
-        return $this->transport->request('POST', "/images/{$name}/tag", null, [
-            'repo' => $repo,
-            'tag' => $tag,
-        ]);
+        return $this->transport->request('POST', "/images/{$name}/tag", null, ['repo' => $repo, 'tag' => $tag]);
     }
 
     public function history(string $name): DockerResponse
@@ -262,13 +205,9 @@ final class Images extends AbstractResource
         return $this->transport->request('GET', "/images/{$name}/history");
     }
 
-    /**
-     * @param array<string, array<int, string>> $filters
-     */
+    /** @param array<string, array<int, string>> $filters */
     public function prune(array $filters = []): DockerResponse
     {
-        return $this->transport->request('POST', '/images/prune', null, [
-            'filters' => $filters === [] ? null : $filters,
-        ]);
+        return $this->transport->request('POST', '/images/prune', null, ['filters' => $filters === [] ? null : $filters]);
     }
 }

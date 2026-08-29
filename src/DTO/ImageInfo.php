@@ -9,7 +9,7 @@ namespace Sytxlabs\Dockphp\DTO;
  *
  * @see https://docs.docker.com/engine/api/latest/#tag/Image/operation/ImageInspect
  */
-final class ImageInfo
+final readonly class ImageInfo
 {
     /**
      * @param list<string> $repoTags Empty when the image is untagged.
@@ -18,20 +18,19 @@ final class ImageInfo
      * @param array<string, mixed> $raw The untouched, fully decoded source array.
      */
     public function __construct(
-        public readonly string $id,
-        public readonly array $repoTags,
-        public readonly array $repoDigests,
-        public readonly string $parent,
-        public readonly string $comment,
-        public readonly string $created,
-        public readonly string $author,
-        public readonly string $architecture,
-        public readonly string $os,
-        public readonly int $size,
-        public readonly array $config,
-        private readonly array $raw,
-    ) {
-    }
+        public string $id,
+        public array $repoTags,
+        public array $repoDigests,
+        public string $parent,
+        public string $comment,
+        public string $created,
+        public string $author,
+        public string $architecture,
+        public string $os,
+        public int $size,
+        public array $config,
+        private array $raw,
+    ) {}
 
     /**
      * @param array<string, mixed> $data

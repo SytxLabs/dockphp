@@ -19,24 +19,13 @@ final class Volumes extends AbstractResource
      */
     public function list(array $filters = []): array
     {
-        $response = $this->transport->request('GET', '/volumes', null, [
-            'filters' => $filters === [] ? null : $filters,
-        ]);
-
-        $data = $this->decodeObject($response);
-        $volumes = is_array($data['Volumes'] ?? null) ? $data['Volumes'] : [];
-
-        return array_map(
-            static fn (mixed $item): VolumeInfo => VolumeInfo::fromArray(is_array($item) ? $item : []),
-            array_values($volumes),
-        );
+        $data = $this->decodeObject($this->transport->request('GET', '/volumes', null, ['filters' => $filters === [] ? null : $filters]));
+        return array_map(static fn(mixed $item): VolumeInfo => VolumeInfo::fromArray(is_array($item) ? $item : []), array_values(is_array($data['Volumes'] ?? null) ? $data['Volumes'] : []), );
     }
 
     public function inspect(string $name): VolumeInfo
     {
-        $response = $this->transport->request('GET', "/volumes/{$name}");
-
-        return VolumeInfo::fromArray($this->decodeObject($response));
+        return VolumeInfo::fromArray($this->decodeObject($this->transport->request('GET', "/volumes/{$name}")));
     }
 
     /**
@@ -44,16 +33,12 @@ final class Volumes extends AbstractResource
      */
     public function create(string $name, array $options = []): DockerResponse
     {
-        $body = ['Name' => $name] + $options;
-
-        return $this->transport->request('POST', '/volumes/create', $body);
+        return $this->transport->request('POST', '/volumes/create', ['Name' => $name] + $options);
     }
 
     public function remove(string $name, bool $force = false): DockerResponse
     {
-        return $this->transport->request('DELETE', "/volumes/{$name}", null, [
-            'force' => $force,
-        ]);
+        return $this->transport->request('DELETE', "/volumes/{$name}", null, ['force' => $force]);
     }
 
     /**
@@ -61,8 +46,6 @@ final class Volumes extends AbstractResource
      */
     public function prune(array $filters = []): DockerResponse
     {
-        return $this->transport->request('POST', '/volumes/prune', null, [
-            'filters' => $filters === [] ? null : $filters,
-        ]);
+        return $this->transport->request('POST', '/volumes/prune', null, ['filters' => $filters === [] ? null : $filters]);
     }
 }

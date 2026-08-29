@@ -9,7 +9,7 @@ namespace Sytxlabs\Dockphp\DTO;
  *
  * @see https://docs.docker.com/engine/api/latest/#tag/Image/operation/ImageList
  */
-final class ImageSummary
+final readonly class ImageSummary
 {
     /**
      * @param list<string> $repoTags Empty when the image is untagged (`<none>:<none>`).
@@ -18,16 +18,15 @@ final class ImageSummary
      * @param array<string, mixed> $raw The untouched, fully decoded source array.
      */
     public function __construct(
-        public readonly string $id,
-        public readonly string $parentId,
-        public readonly array $repoTags,
-        public readonly array $repoDigests,
-        public readonly int $created,
-        public readonly int $size,
-        public readonly array $labels,
-        private readonly array $raw,
-    ) {
-    }
+        public string $id,
+        public string $parentId,
+        public array $repoTags,
+        public array $repoDigests,
+        public int $created,
+        public int $size,
+        public array $labels,
+        private array $raw,
+    ) {}
 
     /**
      * @param array<string, mixed> $data

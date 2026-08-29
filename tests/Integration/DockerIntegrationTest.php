@@ -9,11 +9,7 @@ use Sytxlabs\Dockphp\DockerClient;
 use Sytxlabs\Dockphp\DTO\ContainerSummary;
 use Sytxlabs\Dockphp\DTO\ImageSummary;
 
-/**
- * Runs only against a real Docker Engine. Automatically skipped when
- * /var/run/docker.sock does not exist (e.g. on a machine without
- * Docker, or on Windows) — no environment variable required.
- */
+/** Runs only against a real Docker Engine. Automatically skipped when /var/run/docker.sock does not exist (e.g. on a machine without Docker, or on Windows) - no environment variable required. */
 final class DockerIntegrationTest extends TestCase
 {
     private const SOCKET_PATH = '/var/run/docker.sock';
@@ -27,15 +23,12 @@ final class DockerIntegrationTest extends TestCase
 
     public function testPingSucceedsAgainstRealDaemon(): void
     {
-        $client = new DockerClient(self::SOCKET_PATH);
-
-        self::assertTrue($client->system()->ping());
+        self::assertTrue((new DockerClient(self::SOCKET_PATH))->system()->ping());
     }
 
     public function testListContainersAndImagesAgainstRealDaemon(): void
     {
         $client = new DockerClient(self::SOCKET_PATH);
-
         $containers = $client->containers()->list(['all' => true]);
         self::assertIsArray($containers);
         if ($containers !== []) {
@@ -51,8 +44,6 @@ final class DockerIntegrationTest extends TestCase
 
     public function testApiVersionIsAutoDetected(): void
     {
-        $client = new DockerClient(self::SOCKET_PATH);
-
-        self::assertMatchesRegularExpression('/^\d+\.\d+$/', $client->getApiVersion());
+        self::assertMatchesRegularExpression('/^\d+\.\d+$/', (new DockerClient(self::SOCKET_PATH))->getApiVersion());
     }
 }

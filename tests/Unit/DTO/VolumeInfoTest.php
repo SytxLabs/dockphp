@@ -20,7 +20,6 @@ final class VolumeInfoTest extends TestCase
             'Labels' => ['env' => 'prod'],
             'Options' => [],
         ]);
-
         self::assertSame('my-volume', $volume->name);
         self::assertSame('local', $volume->driver);
         self::assertSame('/var/lib/docker/volumes/my-volume/_data', $volume->mountpoint);
@@ -31,16 +30,12 @@ final class VolumeInfoTest extends TestCase
 
     public function testGetNameReturnsName(): void
     {
-        $volume = VolumeInfo::fromArray(['Name' => 'my-volume']);
-
-        self::assertSame('my-volume', $volume->getName());
+        self::assertSame('my-volume', VolumeInfo::fromArray(['Name' => 'my-volume'])->getName());
     }
 
     public function testRawReturnsOriginalArrayUntouched(): void
     {
         $data = ['Name' => 'my-volume', 'SomeUnmodeledField' => 'kept'];
-        $volume = VolumeInfo::fromArray($data);
-
-        self::assertSame($data, $volume->raw());
+        self::assertSame($data, VolumeInfo::fromArray($data)->raw());
     }
 }
