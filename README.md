@@ -2,6 +2,10 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP](https://img.shields.io/badge/php-%3E%3D8.2-777bb4.svg)](composer.json)
+[![Check code style](https://github.com/SytxLabs/dockphp/actions/workflows/code-style.yml/badge.svg?style=flat-square)](https://github.com/SytxLabs/dockphp/actions/workflows/code-style.yml)
+[![Tests](https://github.com/SytxLabs/dockphp/actions/workflows/tests.yml/badge.svg?style=flat-square)](https://github.com/SytxLabs/dockphp/actions/workflows/tests.yml)
+[![Latest Version on Packagist](https://poser.pugx.org/sytxlabs/dockphp/v/stable?format=flat-square)](https://packagist.org/packages/sytxlabs/dockphp)
+[![Total Downloads](https://poser.pugx.org/sytxlabs/dockphp/downloads?format=flat-square)](https://packagist.org/packages/sytxlabs/dockphp)
 
 Framework-agnostic PHP client for the Docker Engine API, talking directly to
 `/var/run/docker.sock` over HTTP (via Guzzle).
